@@ -1,0 +1,5 @@
+<?php require 'config.php'; require_login(); $u=user();
+$where = is_center() ? '' : ' WHERE branch_id='.(int)$u['branch_id'];
+$patients = (int)db()->query('SELECT COUNT(*) FROM patients'.($where ? ' WHERE registered_branch_id='.(int)$u['branch_id'] : ''))->fetchColumn();
+$records = (int)db()->query('SELECT COUNT(*) FROM medical_records'.($where ? $where : ''))->fetchColumn();
+layout_start('Dashboard'); ?><h1>Dashboard</h1><p>Selamat datang, <b><?=e($u['full_name'])?></b>. Akses: <span class="badge"><?=is_center()?'Semua cabang':e($u['branch_name'])?></span></p><div class="grid"><div class="card stat">Pasien terdaftar<strong><?=$patients?></strong></div><div class="card stat">Rekam medis dapat dilihat<strong><?=$records?></strong></div></div><div class="card"><h2>Aturan akses</h2><ul><li>Cabang hanya dapat melihat rekam medis yang dibuat pada cabangnya.</li><li>Rumah sakit pusat dapat melihat seluruh rekam medis.</li><li>Pasien dapat diperiksa di cabang mana pun menggunakan nomor rekam medis.</li></ul></div><?php layout_end(); ?>
